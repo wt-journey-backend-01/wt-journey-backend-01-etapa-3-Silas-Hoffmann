@@ -28,7 +28,7 @@ async function update(id, object){
     try {
         const updatedAgente = await db("agentes")
             .where({id: id})
-            .update(object, ["*"])
+            .update(object)
             .returning("*");
         
         if (!updatedAgente || updatedAgente.length === 0) {

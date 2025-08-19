@@ -1,20 +1,30 @@
 /**
  * @param { import("knex").Knex } knex
- * @returns { Promise<void> } 
+ * @returns { Promise<void> }
  */
-const { v4: uuidv4 } = require('uuid');
-
-exports.seed = async function(knex) {
+exports.seed = async function (knex) {
+  // Apaga dados anteriores (reset do seed)
   await knex('agentes').del();
 
-  const agente1 = uuidv4();
-  const agente2 = uuidv4();
-
+  // Insere 3 agentes fixos
   await knex('agentes').insert([
-    { id: agente1, nome: 'Agente Silva', dataDeIncorporacao: '2020-01-10', cargo: 'Investigador' },
-    { id: agente2, nome: 'Agente Souza', dataDeIncorporacao: '2019-05-20', cargo: 'Delegado' }
+    {
+      id: '595d2fc2-81c3-43ec-9c76-ab09b1a56a19',
+      nome: 'João Silva',
+      cargo: 'Detetive',
+      dataDeIncorporacao: '2018-05-12'
+    },
+    {
+      id: 'b08bbf40-a890-4a09-93d9-d586ea682425',
+      nome: 'Maria Souza',
+      cargo: 'Inspetora',
+      dataDeIncorporacao: '2019-07-23'
+    },
+    {
+      id: '2aa4579d-4bc3-47dc-9742-13caaf89a244',
+      nome: 'Carlos Pereira',
+      cargo: 'Agente Especial',
+      dataDeIncorporacao: '2020-11-03'
+    }
   ]);
-
-  return { agente1, agente2 };
 };
-
