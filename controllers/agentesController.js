@@ -1,148 +1,80 @@
-const agentesRepository = require('../repositories/agentesRepository');
-const { validate: isUUID } = require("uuid");
+const agentesRepository = require("../repositories/agentesRepository");
+const { isUUID } = require("validator");
 
-// --- funções auxiliares de validação ---
-
-function validacaoData(dataStr) {
-    const regex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!regex.test(dataStr)) return 0;
-    const data = new Date(dataStr);
-    const hoje = new Date();
-    data.setHours(0,0,0,0);
-    hoje.setHours(0,0,0,0);
-    if (data > hoje) return -1;
-    return 1;
-}
-
-// --- Controllers ---
-
-// GET /agentes
-async function getAllAgentes(req, res, next) {
-    try {
-        const agentes = await agentesRepository.read();
-        return res.status(200).json(agentes);
-    } catch (error) {
-        next(error);
-    }
-}
-
-// GET /agentes/:id
-async function getAgenteById(req, res, next) {
-    try {
-        const id = req.params.id;
-        if (!isUUID(id)) return res.status(400).send("ID inválido (UUID esperado)");
-
-        const agente = await agentesRepository.read({ id });
-        if (!agente) {
-            return res.status(404).send("Agente não encontrado");
-        }
-        return res.status(200).json(agente);
-    } catch (error) {
-        next(error);
-    }
-}
-
-// POST /agentes
 async function create(req, res, next) {
     try {
         const { nome, cargo, dataDeIncorporacao } = req.body;
-
-        if (!nome) return res.status(400).send("Nome obrigatório");
-        if (!cargo) return res.status(400).send("Cargo obrigatório");
-        if (!dataDeIncorporacao) return res.status(400).send("Data de incorporação obrigatória");
-
-        const datavalida = validacaoData(dataDeIncorporacao);
-        if (datavalida === 0) return res.status(400).send("Data inválida (YYYY-MM-DD)");
-        if (datavalida === -1) return res.status(400).send("Data não pode ser futura");
+        if (!nome || !cargo || !dataDeIncorporacao) {
+            return res.status(400).json({ message: "Todos os campos são obrigatórios" });
+        }
 
         const newAgente = await agentesRepository.create({ nome, cargo, dataDeIncorporacao });
-        return res.status(201).json(newAgente[0]); // retorno do Knex com returning('*') é array
-    } catch (error) {
-        next(error);
+        return res.status(201).json(newAgente); // ✅ sem [0]
+    } catch (err) {
+        next(err);
     }
 }
 
-// PUT /agentes/:id
+async function read(req, res, next) {
+    try {
+        const { id } = req.params;
+
+        if (!isUUID(id)) {
+            return res.status(400).json({ message: "ID inválido (UUID esperado)" });
+        }
+
+        const agente = await agentesRepository.read({ id });
+        if (!agente) {
+            return res.status(404).json({ message: "Agente não encontrado" });
+        }
+
+        return res.status(200).json(agente);
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function update(req, res, next) {
     try {
-        const uuid = req.params.id;
-        if (!isUUID(uuid)) return res.status(400).send("ID inválido (UUID esperado)");
+        const { id } = req.params;
+        const data = req.body;
 
-        const { nome, cargo, dataDeIncorporacao } = req.body;
-
-        if ('id' in req.body) return res.status(400).send("ID não pode ser alterado");
-        if (!nome) return res.status(400).send("Nome obrigatório");
-        if (!cargo) return res.status(400).send("Cargo obrigatório");
-        if (!dataDeIncorporacao) return res.status(400).send("Data de incorporação obrigatória");
-
-        const datavalida = validacaoData(dataDeIncorporacao);
-        if (datavalida === 0) return res.status(400).send("Data inválida YYYY-MM-DD");
-        if (datavalida === -1) return res.status(400).send("Data não pode ser futura");
-
-        const updatedAgente = await agentesRepository.update(uuid, { nome, cargo, dataDeIncorporacao });
-        if (!updatedAgente) {
-            return res.status(404).send("Agente não encontrado");
+        if (!isUUID(id)) {
+            return res.status(400).json({ message: "ID inválido (UUID esperado)" });
         }
 
-        return res.status(200).json(updatedAgente);
-    } catch (error) {
-        next(error);
+        const updatedAgente = await agentesRepository.update(id, data);
+        if (!updatedAgente) {
+            return res.status(404).json({ message: "Agente não encontrado para atualização" });
+        }
+
+        return res.status(200).json(updatedAgente); // ✅ sem [0]
+    } catch (err) {
+        next(err);
     }
 }
 
-// PATCH /agentes/:id (parcial)
-async function updateParcial(req, res, next) {
+async function remove(req, res, next) {
     try {
-        const uuid = req.params.id;
-        if (!isUUID(uuid)) return res.status(400).send("ID inválido (UUID esperado)");
-        if ('id' in req.body) return res.status(400).send("ID não pode ser alterado");
-
-        const { nome, cargo, dataDeIncorporacao } = req.body;
-
-        if (dataDeIncorporacao) {
-            const datavalida = validacaoData(dataDeIncorporacao);
-            if (datavalida === 0) return res.status(400).send("Data inválida YYYY-MM-DD");
-            if (datavalida === -1) return res.status(400).send("Data não pode ser futura");
+        const { id } = req.params;
+        if (!isUUID(id)) {
+            return res.status(400).json({ message: "ID inválido (UUID esperado)" });
         }
 
-        const updateObj = {};
-        if (nome) updateObj.nome = nome;
-        if (cargo) updateObj.cargo = cargo;
-        if (dataDeIncorporacao) updateObj.dataDeIncorporacao = dataDeIncorporacao;
-
-        const updatedAgente = await agentesRepository.update(uuid, updateObj);
-        if (!updatedAgente) {
-            return res.status(404).send("Agente não encontrado");
+        const deleted = await agentesRepository.remove(id);
+        if (!deleted) {
+            return res.status(404).json({ message: "Agente não encontrado para exclusão" });
         }
 
-        return res.status(200).json(updatedAgente);
-    } catch (error) {
-        next(error);
-    }
-}
-
-// DELETE /agentes/:id
-async function deleteAgente(req, res, next) {
-    try {
-        const id = req.params.id;
-        if (!isUUID(id)) return res.status(400).send("ID inválido (UUID esperado)");
-
-        const sucesso = await agentesRepository.remove(id);
-        if (!sucesso) {
-            return res.status(404).send("Agente não encontrado");
-        }
-
-        return res.status(204).send();
-    } catch (error) {
-        next(error);
+        return res.status(204).send(); // sucesso sem body
+    } catch (err) {
+        next(err);
     }
 }
 
 module.exports = {
-    getAllAgentes,
-    getAgenteById,
     create,
+    read,
     update,
-    updateParcial,
-    deleteAgente
+    remove,
 };
