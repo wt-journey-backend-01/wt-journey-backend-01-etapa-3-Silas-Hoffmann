@@ -1,15 +1,26 @@
 const express = require('express')
 const app = express();
+
 app.use(express.json());
 
 const agentesRouter = require("./routes/agentesRoutes")
-app.use('/agentes', agentesRouter);
-
 const casosRouter = require("./routes/casosRoutes")
+
+app.use('/agentes', agentesRouter);
 app.use('/casos', casosRouter);
 
-const PORT = 3000;
+app.get('/', (req, res) => {
+    res.status(200).send('Bem vindo ao Departamento de Policia!');
+});
 
+const errorHandler = require("./utils/errorHandler");
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor do Departamento de Polícia rodando em localhost:${PORT}`);
+});
 /*
  ______________
 |    status    |
@@ -21,14 +32,3 @@ const PORT = 3000;
 | DELETE | 204 |
  --------------
 */
-
-/*--------------------------------------------
------------------Rotas raiz-------------------
---------------------------------------------*/
-app.listen(PORT, () => {
-    console.log(`Servidor do Departamento de Polícia rodando em localhost:${PORT}`);
-});
-
-app.get('/', (req, res) => {
-    res.status(200).send('Bem vindo ao Departamento de Policia!');
-});
