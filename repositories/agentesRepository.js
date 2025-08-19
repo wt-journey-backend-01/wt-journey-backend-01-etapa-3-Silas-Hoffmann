@@ -1,7 +1,9 @@
 const db = require("../db/db");
+const { v4: uuidv4 } = require("uuid");
 
 async function create(object){
     try {
+        object.id = uuidv4();
         const createdAgente = await db("agentes").insert(object).returning("*");
         return createdAgente;
     } catch (error) {
@@ -10,13 +12,12 @@ async function create(object){
     }
 }
 
-async function read(id){
+async function read(query={}){
     try {
-        const result = await db("agentes").where({id: id}).first();
-        if (!result) {
-            return false;
-        }
-        return result[0];
+        const result = await db("agentes").where(query);
+        const isSingular = Object.keys(query).length == 1 && 'id' in query;
+        return isSingular ? result[0] : result;
+
     }catch (error) {
         console.error("Error reading agente:", error);
         return false;
@@ -49,6 +50,9 @@ async function remove(id){
     }
 }
 
-create({nome: "Agente Teste", cargo: "Testador", dataDeIncorporacao: "2023-01-01"})
-    .then(result => console.log("Created Agente:", result))
-    .catch(error => console.error("Error in create:", error));
+module.exports = {
+    create,
+    read,
+    update,
+    remove
+}

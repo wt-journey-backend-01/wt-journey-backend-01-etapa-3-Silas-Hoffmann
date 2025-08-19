@@ -4,7 +4,7 @@
  */
 exports.up = function(knex) {
     return knex.schema.createTable('agentes', (table) => {
-        table.uuid('id').primary();
+        table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
         table.string('nome').notNullable();
         table.date('dataDeIncorporacao').notNullable();
         table.string('cargo').notNullable();
