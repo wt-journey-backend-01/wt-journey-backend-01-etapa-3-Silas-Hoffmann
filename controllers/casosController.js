@@ -10,7 +10,7 @@ function isUUID(str) {
 // --- Controllers ---
 
 // GET /casos
-async function getAllCasos(req, res) {
+async function getAllCasos(req, res, next) {
     try {
         const casos = await casosRepository.read();
         return res.status(200).json(casos);
@@ -20,7 +20,7 @@ async function getAllCasos(req, res) {
 }
 
 // GET /casos/:id
-async function getCasoById(req, res) {
+async function getCasoById(req, res, next) {
     try {
         const id = req.params.id;
         if (!isUUID(id)) return res.status(400).send("ID inválido (UUID esperado)");
@@ -35,7 +35,7 @@ async function getCasoById(req, res) {
 }
 
 // POST /casos
-async function create(req, res) {
+async function create(req, res, next) {
     try {
         const { titulo, descricao, status, agente_id } = req.body;
 
@@ -59,7 +59,7 @@ async function create(req, res) {
 }
 
 // PUT /casos/:id
-async function update(req, res) {
+async function update(req, res, next) {
     try {
         const uuid = req.params.id;
         if (!isUUID(uuid)) return res.status(400).send("ID inválido (UUID esperado)");
@@ -91,7 +91,7 @@ async function update(req, res) {
 }
 
 // PATCH /casos/:id -> atualização parcial
-async function updateParcial(req, res) {
+async function updateParcial(req, res, next) {
     try {
         const uuid = req.params.id;
         if (!isUUID(uuid)) return res.status(400).send("ID inválido (UUID esperado)");
@@ -126,7 +126,7 @@ async function updateParcial(req, res) {
 }
 
 // DELETE /casos/:id
-async function deleteCaso(req, res) {
+async function deleteCaso(req, res, next) {
     try {
         const id = req.params.id;
         if (!isUUID(id)) return res.status(400).send("ID inválido (UUID esperado)");

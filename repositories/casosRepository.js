@@ -26,7 +26,7 @@ async function read(query={}){
 async function update(id, object){
     try {
         const updatedCaso = await db("casos").where({id: id}).update(object, ["*"]).returning("*");
-        if (!updatedCaso) {
+        if (!updatedCaso || updatedCaso.length === 0) {
             return false;
         }
         return updatedCaso[0];

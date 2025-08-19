@@ -30,7 +30,7 @@ async function getAllAgentes(req, res, next) {
 }
 
 // GET /agentes/:id
-async function getAgenteById(req, res) {
+async function getAgenteById(req, res, next) {
     try {
         const id = req.params.id;
         if (!isUUID(id)) return res.status(400).send("ID inválido (UUID esperado)");
@@ -46,7 +46,7 @@ async function getAgenteById(req, res) {
 }
 
 // POST /agentes
-async function create(req, res) {
+async function create(req, res, next) {
     try {
         const { nome, cargo, dataDeIncorporacao } = req.body;
 
@@ -66,7 +66,7 @@ async function create(req, res) {
 }
 
 // PUT /agentes/:id
-async function update(req, res) {
+async function update(req, res, next) {
     try {
         const uuid = req.params.id;
         if (!isUUID(uuid)) return res.status(400).send("ID inválido (UUID esperado)");
@@ -94,7 +94,7 @@ async function update(req, res) {
 }
 
 // PATCH /agentes/:id (parcial)
-async function updateParcial(req, res) {
+async function updateParcial(req, res, next) {
     try {
         const uuid = req.params.id;
         if (!isUUID(uuid)) return res.status(400).send("ID inválido (UUID esperado)");
@@ -125,7 +125,7 @@ async function updateParcial(req, res) {
 }
 
 // DELETE /agentes/:id
-async function deleteAgente(req, res) {
+async function deleteAgente(req, res, next) {
     try {
         const id = req.params.id;
         if (!isUUID(id)) return res.status(400).send("ID inválido (UUID esperado)");
