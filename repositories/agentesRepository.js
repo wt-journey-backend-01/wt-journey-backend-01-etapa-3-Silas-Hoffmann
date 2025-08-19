@@ -2,7 +2,7 @@ const db = require("../db/db");
 
 async function create(object){
     try {
-        const createdAgente = await db("agentesRepository").insert(object).returning("*");
+        const createdAgente = await db("agentes").insert(object).returning("*");
         return createdAgente;
     } catch (error) {
         console.error("Error creating agente:", error);
@@ -12,7 +12,7 @@ async function create(object){
 
 async function read(id){
     try {
-        const result = await db("agentesRepository").where({id: id}).first();
+        const result = await db("agentes").where({id: id}).first();
         if (!result) {
             return false;
         }
@@ -25,7 +25,7 @@ async function read(id){
 
 async function update(id, object){
     try {
-        const  updatedAgente = await db("agentesRepository").where({id: id}).update(object, ["*"]).returning("*");
+        const  updatedAgente = await db("agentes").where({id: id}).update(object, ["*"]).returning("*");
         if (!updatedAgente) {
             return false;
         }
@@ -38,7 +38,7 @@ async function update(id, object){
 
 async function remove(id){
     try {
-        const deletedAgente = await db("agentesRepository").where({id: id}).del();
+        const deletedAgente = await db("agentes").where({id: id}).del();
         if (!deletedAgente) {
             return false;
         }
