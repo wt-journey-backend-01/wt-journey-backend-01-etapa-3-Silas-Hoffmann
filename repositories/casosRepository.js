@@ -8,7 +8,8 @@ async function create(object){
         return createdCaso;
     } catch (error) {
         console.error("Error creating caso:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
@@ -19,7 +20,8 @@ async function read(query={}){
         return isSingular ? result[0] : result;
     } catch (error) {
         console.error("Error reading caso:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
@@ -27,12 +29,14 @@ async function update(id, object){
     try {
         const updatedCaso = await db("casos").where({id: id}).update(object).returning("*");
         if (!updatedCaso || updatedCaso.length === 0) {
-            return false;
+            err.statusCode = 404;
+            throw err;
         }
         return updatedCaso[0];
     } catch (error) {
         console.error("Error updating caso:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
@@ -40,12 +44,14 @@ async function remove(id){
     try {
         const deletedCaso = await db("casos").where({id: id}).del();
         if (!deletedCaso) {
-            return false;
+            err.statusCode = 404;
+            throw err;
         }
         return true;
     } catch (error) {
         console.error("Error deleting caso:", error);
-        return false;
+        err.statusCode = 500; // Internal Server Error
+        throw err;
     }
 }
 

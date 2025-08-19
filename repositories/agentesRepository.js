@@ -8,7 +8,8 @@ async function create(object){
         return createdAgente;
     } catch (error) {
         console.error("Error creating agente:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
@@ -20,7 +21,8 @@ async function read(query={}){
 
     }catch (error) {
         console.error("Error reading agente:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
@@ -32,12 +34,14 @@ async function update(id, object){
             .returning("*");
         
         if (!updatedAgente || updatedAgente.length === 0) {
-            return false;
+            err.statusCode = 404;
+            throw err;
         }
         return updatedAgente[0];
     }catch (error) {
         console.error("Error updating agente:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
@@ -45,12 +49,14 @@ async function remove(id){
     try {
         const deletedAgente = await db("agentes").where({id: id}).del();
         if (!deletedAgente) {
-            return false;
+            err.statusCode = 404;
+            throw err;
         }
         return true;
     }catch (error) {
         console.error("Error deleting agente:", error);
-        return false;
+        err.statusCode = 500;
+        throw err;
     }
 }
 
