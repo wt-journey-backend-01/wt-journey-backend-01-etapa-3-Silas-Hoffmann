@@ -1,5 +1,4 @@
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
+require("dotenv").config();
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
@@ -26,7 +25,7 @@ module.exports = {
   ci: {
     client: 'pg',
     connection: {
-      host: 'postgres',
+      host: 'postgres-db',
       port: 5432,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
@@ -39,5 +38,4 @@ module.exports = {
       directory: './db/seeds',
     },
   }
-
 };
