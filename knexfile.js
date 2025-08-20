@@ -4,7 +4,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
-module.exports = {
+const config = {
   development: {
     client: "pg",
     connection: {
@@ -21,6 +21,7 @@ module.exports = {
       directory: path.resolve(__dirname, "db/seeds"),
     },
   },
+
   ci: {
     client: "pg",
     connection: {
@@ -38,3 +39,5 @@ module.exports = {
     },
   },
 };
+
+module.exports = config[process.env.NODE_ENV || "development"];
