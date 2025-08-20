@@ -100,7 +100,7 @@ module.exports = {
   ci: {
     client: 'pg',
     connection: {
-      host: 'postgres', // Using the service name as the host
+      host: 'postgres', 
       port: 5432,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
@@ -125,13 +125,18 @@ Dentro da pasta `db/`, você deve criar os seguinte arquivo:
 Arquivo responsável por criar e exportar a instância do Knex:
 
 ```js
-const config = require("../knexfile")
-const knex = require("knex")
+const knexConfig = require('../knexfile');
+const knex = require('knex'); 
 
-const db = knex(config.development)
+const nodeEnv = process.env.NODE_ENV || 'development';
+const config = knexConfig[nodeEnv]; 
 
-module.exports = db
+const db = knex(config);
+
+module.exports = db;
 ```
+
+Crie a variável de ambiente ```NODE_ENV``` no arquivo ```.env``` para definir qual ambiente será usado. No caso, em desenvolvimento, o valor atribuído a ela deverá ser ```development```.
 
 ---
 
@@ -139,7 +144,7 @@ module.exports = db
 - Use o Knex CLI para gerar as migrations com o seguinte nome (Tem certeza de que o diretório que você se encontra no terminal é a raiz do projeto, do contrário você terá uma pasta `db/` duplicada):
 
 ```bash
-npx knex migrate:make solution_migrations
+npx knex migrate:make solution_migrations.js
 
 ```
 
@@ -155,12 +160,10 @@ npx knex migrate:latest
 ---
 
 ### 5. Criar Seeds
-- Crie seeds para popular as tabelas com pelo menos 2 agentes e 2 casos. Crie um arquivo para cada tabela e siga a nomeclatura que definimos abaixo. (Tem certeza de que o diretório que você se encontra no terminal é a raiz do projeto, do contrário você terá uma pasta `db/` duplicada):
+- Crie seeds para popular as tabelas com pelo menos 2 agentes e 2 casos (Tem certeza de que o diretório que você se encontra no terminal é a raiz do projeto, do contrário você terá uma pasta `db/` duplicada):
 
 ```bash
-npx knex seed:make agentes
-npx knex seed:make casos
-
+npx knex seed:make solution_migrations.js
 
 ```
 - Execute as seeds com:
@@ -192,4 +195,5 @@ Crie esse arquivo e adicione instruções claras para:
 ---
 
 ## **Bônus 🌟**
+- Adicionar um script `npm run db:reset` que derruba, recria, migra e popula o banco automaticamente.
 - Implementar endpoint `/agentes/:id/casos` para listar todos os casos atribuídos a um agente.
