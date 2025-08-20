@@ -9,7 +9,7 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      host: process.env.DB_HOST || 'postgres',
+      host: process.env.DB_HOST || 'postgres-db',
       port: 5432,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
