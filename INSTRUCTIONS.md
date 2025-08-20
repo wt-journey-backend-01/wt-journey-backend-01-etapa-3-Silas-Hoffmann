@@ -44,10 +44,12 @@ O .env não deve ser versionado (adicione no .gitignore), mas é obrigatório pa
 
 Crie um arquivo .env na raiz do projeto com o seguinte conteúdo:
 ```
+NODE_ENV=development
+
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=policia_db
-DB_HOST=localhost
+DB_HOST=postgres-db
 DB_PORT=5432
 ```
 💡 Caso esteja rodando no Docker Compose, o DB_HOST pode ser postgres (nome do serviço definido no docker-compose).
