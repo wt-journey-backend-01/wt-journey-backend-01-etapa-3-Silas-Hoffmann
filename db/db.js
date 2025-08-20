@@ -1,17 +1,11 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+const knexConfig = require('../knexfile');
 const knex = require("knex");
+const nodeEnv = process.env.NODE_ENV || 'development';
+const config = knexConfig[nodeEnv]; 
 
-const db = knex({
-  client: "pg",
-  connection: {
-    host: process.env.DB_HOST || "127.0.0.1",
-    port: process.env.DB_PORT || 5432,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
-  },
-});
+const db = knex(config);
 
 console.log("DB Config:", {
   host: process.env.DB_HOST,
